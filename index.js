@@ -30,12 +30,13 @@ module.exports.resizer = async (event, context) => {
   } catch (e) {
     //Requested image not existing in S3
     const objectRegex = /\/[^\/]+$/ //Used to extract the Object from the URL
-    const sizeRegex = /(\d*x\d*)/   //Used to extract the size from the Object name 
-
-    const requestedObject = requestedUrl.match(objectRegex)[0].replace("/", "") //e.g. richmond_720x480.jpg
-    const requestedSize = requestedObject.match(sizeRegex)[0] //e.g. 720_480
-    const [width, height] = requestedSize.split("x") //e.g. [720, 480]
-    const fullSizeObject = requestedObject.replace(`_${requestedSize}`, "") //e.g. richmond.jpg
+    const sizeRegex = /(\d+)(?!.*\d)/   //Used to extract the size from the Object name
+    console.log(JSON.stringify(event.userRequest,null,4))
+    const requestedObject = requestedUrl.replace(`https://${event.userRequest.headers.Host}/`,"")
+    //const requestedObject = requestedUrl.match(objectRegex)[0].replace("/", "") //e.g. richmond_720x480.jpg
+    const width = requestedObject.match(sizeRegex)[0] //e.g. 720_480
+    //const [width, height] = requestedSize.split("x") //e.g. [720, 480]
+    const fullSizeObject = requestedObject.replace(`_${width}`, "") //e.g. richmond.jpg
     const fullSizeURL = `https://${BUCKET_NAME}.s3.amazonaws.com/${fullSizeObject}`
 
     try {

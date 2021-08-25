@@ -13,9 +13,10 @@ client = boto3.client(
 print('Request Image resized by S3 Object Lambda:')
 image = client.get_object(
   Bucket='arn:aws:s3-object-lambda:eu-west-1:541827878959:accesspoint/test-cdn-tbarratt-image-lambda',
-  Key='assets/post/development/cover_700x2000.png')["Body"]
-os.mkdir("out")
-with open('out/cover_700x2000.png','wb') as f:
+  Key='assets/post/2020-year-in-review/cover_200x200.jpg')["Body"]
+if not os.path.exists("out"):
+  os.mkdir('out')
+with open('out/blob2.jpg','wb') as f:
   for i in image._raw_stream:
     f.write(i)
     f.close
